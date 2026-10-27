@@ -9,18 +9,15 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 def test_synthetic_recording(tmp_path):
     cu8 = tmp_path / "teste.cu8"
-    gen = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "gerar_sinal_teste.py"), str(cu8)],
-                         capture_output=True, text=True, check=True, cwd=ROOT)
-    cmd_line = [ln for ln in gen.stdout.splitlines() if ln.startswith("python mesh_sdr.py")][0]
-    # reuse the exact keys printed by the generator
-    import shlex
-    args = shlex.split(cmd_line)[2:]
+    env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8", COLUMNS="120")
+    subprocess.run([sys.executable, os.path.join(ROOT, "tools", "gerar_sinal_teste.py"), str(cu8)],
+                   capture_output=True, check=True, cwd=ROOT, env=env)
+    args = json.loads((tmp_path / "teste.cu8.args.json").read_text(encoding="utf-8"))
     log = tmp_path / "out.jsonl"
-    i = args.index("--log")
-    args[i + 1] = str(log)
-    env = dict(os.environ, PYTHONUTF8="1", COLUMNS="120")
-    subprocess.run([sys.executable, os.path.join(ROOT, "mesh_sdr.py"), *args], check=True, cwd=ROOT, env=env,
-                   capture_output=True, text=True)
+    args[args.index("--log") + 1] = str(log)
+    run = subprocess.run([sys.executable, os.path.join(ROOT, "mesh_sdr.py"), *args], cwd=ROOT, env=env,
+                         capture_output=True)
+    assert run.returncode == 0, run.stderr.decode("utf-8", "replace")[-3000:]
     recs = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
     assert len(recs) == 13
     assert all(r["lora"]["crc_ok"] for r in recs)

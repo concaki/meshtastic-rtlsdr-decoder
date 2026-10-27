@@ -11,6 +11,7 @@ decodificador sem rádio. Sinal LongFast a +250 kHz do centro, 1 MS/s.
 from __future__ import annotations
 
 import base64
+import json
 import os
 import struct
 import sys
@@ -139,6 +140,12 @@ def main(path="teste.cu8"):
     print(f"{path}: {len(s) / FS:.1f} s, {len(pkts)} pacotes")
     for name, raw, snr in pkts:
         print(f"  - {name} ({len(raw)} bytes, SNR {snr} dB)")
+    args = ["--arquivo", path, "--taxa", "1000000", "--sem-modulo", "--log", "teste.jsonl",
+            "--canal", f"Familia:{b64(FAM_PSK)}", "--canal", f"Seguro:{b64(SEG_PSK)}:aead",
+            "--chave-privada", b64(A_PRIV), "--meu-no", f"!{A:08x}"]
+    # argumentos também em JSON (usado pelos testes; evita problemas de aspas/barras no Windows)
+    with open(path + ".args.json", "w", encoding="utf-8") as f:
+        json.dump(args, f)
     print("\nPara decodificar:")
     print(f'python mesh_sdr.py --arquivo {path} --taxa 1000000 --sem-modulo --log teste.jsonl '
           f'--canal "Familia:{b64(FAM_PSK)}" --canal "Seguro:{b64(SEG_PSK)}:aead" '

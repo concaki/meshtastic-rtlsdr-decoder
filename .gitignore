@@ -18,3 +18,4 @@ teste_comando.txt
 
 # DLLs de driver (cada um baixa a sua)
 drivers/*.dll
+*.args.json

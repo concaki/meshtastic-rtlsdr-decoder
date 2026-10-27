@@ -27,6 +27,13 @@ from mesh_decode import (BROADCAST, PRESETS, ChannelKey, KeyRing, NodeDB, data_m
                          decrypt, expand_psk, node_id, parse_header, parse_psk_arg, port_name)
 from sources import FileSource, FrontEnd, RtlSource, plan_rates
 
+# console do Windows sem UTF-8: evita UnicodeEncodeError com acentos/símbolos
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 try:
     from rich.console import Console
     from rich.panel import Panel
