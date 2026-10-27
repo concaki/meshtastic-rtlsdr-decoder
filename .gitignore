@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Gravações IQ e logs (podem conter tráfego real da sua malha)
+*.cu8
+*.cs8
+*.cs16
+*.cf32
+*.cfile
+*.iq
+*.raw
+*.jsonl
+teste_comando.txt
+
+# DLLs de driver (cada um baixa a sua)
+drivers/*.dll

@@ -1,0 +1,7 @@
+numpy>=1.24
+scipy>=1.10
+cryptography>=41
+protobuf>=4.21
+meshtastic>=2.5
+rich>=13
+pyrtlsdr[lib]>=0.3.0

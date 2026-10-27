@@ -1,0 +1,1 @@
+Coloque aqui rtlsdr.dll e libusb-1.0.dll do driver RTL-SDR Blog (necessario apenas para o RTL-SDR Blog V4).
